@@ -31,47 +31,45 @@ const Timeline = () => {
       const totalCards = cards.length;
 
       if (isMobile) {
-        // --- MOBILE: DECK OF CARDS EFFECT (CSS STICKY + GSAP ANIMATION) ---
-        // We rely on CSS 'sticky top-0' for the positioning (much smoother).
-        // ScrollTrigger is used ONLY for the fade/scale effect.
+        // --- MOBILE: VERTICAL CYBER TIMELINE ---
+        // Simple, clean, vertical list with scroll-triggered slide-ins.
+        // No pinning, no heavy stacking.
+        
+        // Animate the vertical line
+        gsap.fromTo(lineRef.current,
+          { height: "0%" },
+          {
+            height: "100%",
+            ease: "none",
+            scrollTrigger: {
+              trigger: containerRef.current,
+              start: "top 60%",
+              end: "bottom 80%",
+              scrub: 1
+            }
+          }
+        );
+
         cards.forEach((card, index) => {
           if (!card) return;
 
-          ScrollTrigger.create({
-            trigger: card,
-            start: "top top", 
-            end: "bottom top", 
-            scrub: true,
-            id: `card-${index}`,
-            onUpdate: (self) => {
-              // Logic for all cards except the last one
-              if (index < totalCards - 1) {
-                 const progress = self.progress;
-                 gsap.to(card, {
-                     scale: 1 - (progress * 0.05), 
-                     opacity: 1 - (progress * 0.5), 
-                     overwrite: 'auto'
-                 });
+          gsap.fromTo(card,
+            { opacity: 0, x: 50 },
+            {
+              opacity: 1,
+              x: 0,
+              duration: 0.6,
+              ease: "power2.out",
+              scrollTrigger: {
+                trigger: card,
+                start: "top 85%",
+                end: "top 65%",
+                toggleActions: "play none none reverse"
               }
             }
-          });
-          
-          // Simple entrance
-          gsap.fromTo(card, 
-              { opacity: 0, y: 50 },
-              { 
-                  opacity: 1, 
-                  y: 0, 
-                  duration: 0.5,
-                  scrollTrigger: {
-                      trigger: card,
-                      start: "top 90%",
-                      end: "top 70%",
-                      toggleActions: "play none none reverse"
-                  }
-              }
           );
         });
+
       } else {
         // --- DESKTOP: ZIG-ZAG REVEAL ---
         
@@ -147,53 +145,51 @@ const Timeline = () => {
         </motion.div>
 
         {isMobile ? (
-            // --- MOBILE LAYOUT (DECK) ---
-            <div className="relative flex flex-col gap-0 pb-40"> 
-              {schedule.map((item, index) => (
-                <div 
-                  key={index}
-                  ref={el => cardsRef.current[index] = el}
-                  className="sticky top-0 h-screen flex items-center justify-center w-full"
-                >
-                  <div className="relative w-full max-w-2xl mx-auto">
-                    <div className="relative bg-[#0a0520] border border-cyan-500/30 p-8 rounded-2xl shadow-[0_0_50px_rgba(0,0,0,0.5)] overflow-hidden group">
-                      <div className="absolute top-0 right-0 w-32 h-32 bg-cyan-500/10 rounded-full blur-3xl -translate-y-1/2 translate-x-1/2"></div>
-                      <div className="absolute bottom-0 left-0 w-32 h-32 bg-blue-500/10 rounded-full blur-3xl translate-y-1/2 -translate-x-1/2"></div>
-                      
-                      <div className="absolute top-0 left-0 w-4 h-4 border-t-2 border-l-2 border-cyan-500"></div>
-                      <div className="absolute top-0 right-0 w-4 h-4 border-t-2 border-r-2 border-cyan-500"></div>
-                      <div className="absolute bottom-0 left-0 w-4 h-4 border-b-2 border-l-2 border-cyan-500"></div>
-                      <div className="absolute bottom-0 right-0 w-4 h-4 border-b-2 border-r-2 border-cyan-500"></div>
+            // --- MOBILE LAYOUT (VERTICAL LIST) ---
+            <div className="relative pl-4">
+              {/* Vertical Line */}
+              <div ref={lineRef} className="absolute left-4 top-0 w-0.5 bg-linear-to-b from-cyan-500/0 via-cyan-500 to-cyan-500/0 h-full origin-top"></div>
 
-                      <div className="relative z-10 flex flex-col items-center text-center">
-                        <div className="mb-6">
-                            <div className="inline-flex items-center gap-2 px-4 py-2 bg-cyan-500/10 rounded-full border border-cyan-500/30 text-cyan-400 font-mono text-sm tracking-widest">
-                                <Clock size={16} />
-                                {item.time}
-                            </div>
-                        </div>
-                        
-                        <h3 className="text-3xl font-cyber font-bold text-white mb-4 leading-tight">
-                            {item.event}
-                        </h3>
-                        
-                        <p className="text-gray-400 text-lg mb-8 font-rajdhani max-w-lg">
-                            {item.desc}
-                        </p>
-                        
-                        <div className="flex items-center gap-2 text-gray-500 uppercase tracking-wider text-sm font-bold">
-                            <MapPin size={16} className="text-blue-500" /> 
-                            {item.location}
+              <div className="flex flex-col gap-12"> 
+                {schedule.map((item, index) => (
+                  <div 
+                    key={index}
+                    ref={el => cardsRef.current[index] = el}
+                    className="relative pl-8"
+                  >
+                    {/* Timeline Dot */}
+                    <div className="absolute left-0 top-6 -translate-x-1/2 w-3 h-3 bg-deep-space border border-cyan-500 rounded-full shadow-[0_0_10px_rgba(0,243,255,0.8)] z-10">
+                      <div className="absolute inset-0 bg-cyan-400 rounded-full animate-ping opacity-50"></div>
+                    </div>
+
+                    {/* Card */}
+                    <div className="relative bg-[#0a0520]/90 border border-cyan-500/20 p-6 rounded-xl overflow-hidden group active:scale-98 transition-transform">
+                      {/* Tech Corners */}
+                      <div className="absolute top-0 right-0 w-8 h-8 border-t border-r border-cyan-500/30 rounded-tr-lg"></div>
+                      <div className="absolute bottom-0 left-0 w-8 h-8 border-b border-l border-cyan-500/30 rounded-bl-lg"></div>
+
+                      <div className="flex items-center gap-2 mb-3">
+                        <div className="px-2 py-1 bg-cyan-500/10 rounded text-cyan-400 font-mono text-xs tracking-wider flex items-center gap-1">
+                          <Clock size={12} /> {item.time}
                         </div>
                       </div>
+
+                      <h3 className="text-xl font-cyber font-bold text-white mb-2 leading-tight group-hover:text-cyan-400 transition-colors">
+                        {item.event}
+                      </h3>
                       
-                      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 text-[150px] font-cyber font-black text-white/5 pointer-events-none select-none z-0">
-                          0{index + 1}
+                      <p className="text-gray-400 text-sm mb-4 font-rajdhani leading-relaxed">
+                        {item.desc}
+                      </p>
+                      
+                      <div className="flex items-center gap-2 text-gray-500 text-xs font-bold uppercase tracking-wider">
+                        <MapPin size={14} className="text-blue-500" /> 
+                        {item.location}
                       </div>
                     </div>
                   </div>
-                </div>
-              ))}
+                ))}
+              </div>
             </div>
         ) : (
             // --- DESKTOP LAYOUT (ZIG-ZAG) ---
