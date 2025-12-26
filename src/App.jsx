@@ -617,7 +617,7 @@ const App = () => {
             className="w-full min-h-screen relative flex flex-col"
           >
             {/* --- BACKGROUND LAYER --- */}
-            <div className="fixed inset-0 z-0 bg-linear-to-b from-deep-space to-[#0a0520] overflow-hidden">
+            <div className="fixed inset-0 z-0 bg-linear-to-b from-deep-space to-[#0a0520] overflow-hidden bg-noise">
               <MatrixRain />
               <StarField />
               <CyberGrid />
@@ -680,13 +680,22 @@ const App = () => {
 
               {/* Hero Section */}
               <section className="fixed top-0 left-0 w-full h-screen flex items-center justify-center px-4 md:px-6 pt-0 md:pt-20 overflow-hidden z-0 pointer-events-auto">
-                {/* Background Holo Objects - Responsive Positioning */}
-                <div className="absolute top-[15%] -right-[10%] md:top-[10%] md:right-[5%] z-0 pointer-events-none scale-75 md:scale-100 opacity-80 md:opacity-80">
+                
+                {/* Background Holo Objects - Centered Power Core for Mobile */}
+                <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 z-0 pointer-events-none scale-[1.8] md:scale-100 opacity-50 md:opacity-80 mix-blend-screen">
                   <AdvancedHoloCore />
                 </div>
-                <div className="absolute bottom-[15%] -left-[10%] md:bottom-[10%] md:left-[5%] z-0 pointer-events-none scale-75 md:scale-100 opacity-80 md:opacity-80">
-                  <AdvancedHoloCore />
+                
+                {/* Additional Ambient Glow */}
+                <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[500px] h-[500px] bg-cyan-500/10 rounded-full blur-[100px] pointer-events-none animate-pulse"></div>
+
+                {/* Mobile Scanning Line Effect */}
+                <div className="absolute inset-0 pointer-events-none z-0 md:hidden overflow-hidden">
+                   <div className="absolute top-0 left-0 w-full h-1 bg-cyan-500/30 shadow-[0_0_15px_rgba(0,243,255,0.5)] animate-scan-line"></div>
                 </div>
+                
+                {/* Power Surge Effect */}
+                <div className="absolute inset-0 pointer-events-none z-0 md:hidden bg-cyan-500/10 mix-blend-overlay animate-power-surge"></div>
 
                 <motion.div 
                   variants={containerVariants}
@@ -695,44 +704,46 @@ const App = () => {
                   className="max-w-6xl w-full text-center relative z-10 flex flex-col items-center"
                 >
                   {/* Decorative Frame - Responsive */}
-                  <div className="absolute top-0 left-0 w-16 h-16 md:w-32 md:h-32 border-t-2 border-l-2 border-cyan-500/30 rounded-tl-3xl"></div>
-                  <div className="absolute bottom-0 right-0 w-16 h-16 md:w-32 md:h-32 border-b-2 border-r-2 border-blue-500/30 rounded-br-3xl"></div>
+                  <div className="absolute top-0 left-0 w-8 h-8 md:w-32 md:h-32 border-t-2 border-l-2 border-cyan-500/50 rounded-tl-2xl md:rounded-tl-3xl"></div>
+                  <div className="absolute bottom-0 right-0 w-8 h-8 md:w-32 md:h-32 border-b-2 border-r-2 border-blue-500/50 rounded-br-2xl md:rounded-br-3xl"></div>
 
-                  <motion.div variants={itemVariants} className="flex flex-col md:flex-row justify-center items-center gap-2 md:gap-3 mb-4 md:mb-6 mt-0 md:mt-0">
-                      <span className="px-2 md:px-3 py-1 bg-cyan-500/20 border border-cyan-500/50 rounded text-[10px] md:text-xs font-mono tracking-widest text-cyan-300 animate-pulse text-center">
-                          NATIONAL LEVEL EVENT
+                  <motion.div variants={itemVariants} className="flex flex-col md:flex-row justify-center items-center gap-2 md:gap-3 mb-6 md:mb-6 mt-0 md:mt-0">
+                      <span className="px-3 py-1 bg-linear-to-r from-cyan-500/20 to-blue-500/20 border border-cyan-500/50 rounded-full text-[10px] md:text-xs font-mono tracking-[0.2em] text-cyan-300 animate-pulse text-center shadow-[0_0_15px_rgba(0,243,255,0.3)] backdrop-blur-md">
+                          ● NATIONAL LEVEL EVENT
                       </span>
-                      <h2 className="text-cyan-400 font-mono tracking-[0.2em] text-[10px] md:text-sm">
+                      <h2 className="text-cyan-400/80 font-mono tracking-[0.2em] text-[10px] md:text-sm">
                         // 21-22 FEB 2026
                       </h2>
                   </motion.div>
                   
-                  <motion.div variants={itemVariants} className="mb-6 md:mb-8 relative inline-block text-center">
-                    <h1 className="font-cyber text-4xl sm:text-5xl md:text-7xl lg:text-9xl font-black leading-tight md:leading-none cursor-default select-none filter drop-shadow-[0_0_10px_rgba(139,92,246,0.3)] min-h-[1.2em]">
-                      <span className="text-transparent bg-clip-text bg-linear-to-r from-white via-cyan-100 to-gray-400">{typingText}</span>
-                      <span className="animate-blink text-cyan-500 ml-1">|</span>
+                  <motion.div variants={itemVariants} className="mb-8 md:mb-8 relative inline-block text-center">
+                    <h1 className="font-cyber text-5xl sm:text-6xl md:text-7xl lg:text-9xl font-black leading-[0.9] md:leading-none cursor-default select-none filter drop-shadow-[0_0_15px_rgba(139,92,246,0.5)] min-h-[1.2em] tracking-tighter">
+                      <span className="text-transparent bg-clip-text bg-linear-to-b from-white via-cyan-100 to-cyan-900 glitch-text" data-text={typingText}>{typingText}</span>
+                      <span className="animate-blink text-cyan-500 ml-1">_</span>
                     </h1>
-                    <h2 className="font-cyber text-lg sm:text-xl md:text-3xl lg:text-5xl font-bold text-cyan-500 tracking-[0.2em] mt-2 md:mt-4 filter drop-shadow-[0_0_20px_rgba(139,92,246,0.5)]">
-                      <DecodingText text="SANJIVANI UNIVERSITY" />
+                    <h2 className="font-cyber text-lg sm:text-xl md:text-3xl lg:text-5xl font-bold text-cyan-500 tracking-[0.3em] mt-4 md:mt-4 filter drop-shadow-[0_0_20px_rgba(139,92,246,0.5)] uppercase">
+                      <DecodingText text="Sanjivani University" />
                     </h2>
                   </motion.div>
 
-                  <motion.p variants={itemVariants} className="max-w-3xl mx-auto text-gray-300 text-sm md:text-lg lg:text-xl leading-relaxed mb-8 md:mb-12 text-center md:border-l-0 md:pl-0 backdrop-blur-sm p-4 rounded-xl bg-black/30">
-                    Witness the <span className="text-white font-bold">First National Level Tech Fest</span> at Sanjivani University. 
-                    Two days of relentless innovation, coding battles, and engineering marvels. 
-                    <br/><span className="hidden md:block text-cyan-400 text-xs md:text-sm font-bold tracking-widest mt-2">BE PART OF THE LEGACY.</span>
+                  <motion.p variants={itemVariants} className="max-w-2xl mx-auto text-gray-300 text-sm md:text-lg lg:text-xl leading-relaxed mb-10 md:mb-12 text-center backdrop-blur-sm p-4 rounded-xl bg-black/20 border border-white/5">
+                    Witness the <span className="text-cyan-400 font-bold shadow-cyan-500/50 drop-shadow-[0_0_5px_rgba(0,243,255,0.5)]">First National Level Tech Fest</span>. 
+                    <br className="block md:hidden" />
+                    Relentless innovation, coding battles, and engineering marvels.
                   </motion.p>
 
-                  <motion.div variants={itemVariants} className="flex flex-col sm:flex-row items-center justify-center gap-4 md:gap-6 w-full sm:w-auto px-4 sm:px-0">
-                    <MagneticButton className="w-full sm:w-auto group relative px-6 md:px-8 py-3 md:py-4 bg-cyan-600 text-white font-cyber font-bold tracking-widest clip-path-polygon overflow-hidden shadow-[0_0_20px_rgba(0,243,255,0.4)] hover:shadow-[0_0_40px_rgba(0,243,255,0.7)] transition-all active:scale-95">
-                      <span className="relative z-10 flex items-center justify-center gap-2 group-hover:text-black transition-colors duration-300 glitch-text">
-                        EXPLORE EVENTS <ChevronRight size={18} />
+                  <motion.div variants={itemVariants} className="flex flex-col sm:flex-row items-center justify-center gap-4 w-full px-6 sm:px-0">
+                    <MagneticButton className="w-full sm:w-auto group relative px-8 py-4 bg-cyan-600 text-white font-cyber font-bold tracking-widest clip-path-polygon overflow-hidden shadow-[0_0_30px_rgba(0,243,255,0.3)] hover:shadow-[0_0_50px_rgba(0,243,255,0.6)] transition-all active:scale-95 border border-cyan-400/50">
+                      <span className="relative z-10 flex items-center justify-center gap-3 group-hover:text-black transition-colors duration-300">
+                        EXPLORE EVENTS <ChevronRight size={20} className="animate-pulse" />
                       </span>
                       <div className="absolute inset-0 bg-cyan-300 translate-y-full group-hover:translate-y-0 transition-transform duration-300 z-0"></div>
                     </MagneticButton>
                     
-                    <MagneticButton className="w-full sm:w-auto group relative px-6 md:px-8 py-3 md:py-4 border border-white/20 text-white font-cyber font-bold tracking-widest hover:bg-white/5 hover:border-white/40 hover:shadow-[0_0_30px_rgba(255,255,255,0.1)] transition-all bg-transparent backdrop-blur-sm overflow-hidden clip-path-polygon active:scale-95">
-                      <span className="relative z-10">CAMPUS AMBASSADOR</span>
+                    <MagneticButton className="w-full sm:w-auto group relative px-8 py-4 border border-white/20 text-white font-cyber font-bold tracking-widest hover:bg-white/5 hover:border-cyan-500/50 hover:shadow-[0_0_30px_rgba(0,243,255,0.2)] transition-all bg-black/40 backdrop-blur-md overflow-hidden clip-path-polygon active:scale-95">
+                      <span className="relative z-10 flex items-center justify-center gap-2">
+                        CAMPUS AMBASSADOR
+                      </span>
                     </MagneticButton>
                   </motion.div>
                 </motion.div>
