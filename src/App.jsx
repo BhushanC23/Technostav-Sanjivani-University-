@@ -1,8 +1,14 @@
 import React, { useState, useEffect, useMemo, useRef } from 'react';
 import { Menu, X, Instagram, Twitter, Linkedin, ChevronRight, Zap, Code, Cpu, Calendar, MapPin, Ticket, Target, Globe, Maximize, Minimize, Award, Mic, Users, Trophy, User, Mail, Phone, School, Home, Fingerprint, Lock, Unlock } from 'lucide-react';
 import { motion, AnimatePresence, useMotionValue, useSpring, useTransform } from 'framer-motion';
+import Lenis from 'lenis';
+import gsap from 'gsap';
+import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import Timeline from './components/Timeline';
+import FeaturedEvents from './components/FeaturedEvents';
 import MusicController from './components/MusicController';
+
+gsap.registerPlugin(ScrollTrigger);
 
 /**
  * TECHNOSTAV'26 - Sanjivani University
@@ -256,52 +262,6 @@ const DecodingText = ({ text, className }) => {
   return <span className={className}>{display}</span>;
 };
 
-const TiltCard = ({ children, className }) => {
-  const x = useMotionValue(0);
-  const y = useMotionValue(0);
-  const boundsRef = useRef(null);
-
-  const mouseX = useSpring(x, { stiffness: 150, damping: 15 });
-  const mouseY = useSpring(y, { stiffness: 150, damping: 15 });
-
-  const rotateX = useTransform(mouseY, [-0.5, 0.5], ["15deg", "-15deg"]);
-  const rotateY = useTransform(mouseX, [-0.5, 0.5], ["-15deg", "15deg"]);
-
-  const handleMouseEnter = (e) => {
-    boundsRef.current = e.currentTarget.getBoundingClientRect();
-  };
-
-  const handleMouseMove = (e) => {
-    if (!boundsRef.current) return;
-    
-    const width = boundsRef.current.width;
-    const height = boundsRef.current.height;
-    const mouseXVal = e.clientX - boundsRef.current.left;
-    const mouseYVal = e.clientY - boundsRef.current.top;
-    const xPct = mouseXVal / width - 0.5;
-    const yPct = mouseYVal / height - 0.5;
-    x.set(xPct);
-    y.set(yPct);
-  };
-
-  const handleMouseLeave = () => {
-    x.set(0);
-    y.set(0);
-    boundsRef.current = null;
-  };
-
-  return (
-    <motion.div
-      onMouseEnter={handleMouseEnter}
-      onMouseMove={handleMouseMove}
-      onMouseLeave={handleMouseLeave}
-      style={{ rotateX, rotateY, transformStyle: "preserve-3d" }}
-      className={`relative transition-all duration-200 ease-out ${className}`}
-    >
-      {children}
-    </motion.div>
-  );
-};
 
 const MagneticButton = ({ children, className, onClick }) => {
   const ref = useRef(null);
@@ -491,6 +451,25 @@ const App = () => {
   const typingText = useTypingEffect(["TECHNOSTAV'26", "INNOVATION", "THE FUTURE", "REVOLUTION"], 100, 50);
 
   useEffect(() => {
+    const lenis = new Lenis();
+
+    lenis.on('scroll', ScrollTrigger.update);
+
+    gsap.ticker.add((time) => {
+      lenis.raf(time * 1000);
+    });
+
+    gsap.ticker.lagSmoothing(0);
+
+    return () => {
+      lenis.destroy();
+      gsap.ticker.remove((time) => {
+        lenis.raf(time * 1000);
+      });
+    };
+  }, []);
+
+  useEffect(() => {
     const handleScroll = () => setScrolled(window.scrollY > 20);
     window.addEventListener('scroll', handleScroll);
     return () => window.removeEventListener('scroll', handleScroll);
@@ -625,7 +604,7 @@ const App = () => {
             </div>
 
             {/* --- UI LAYER --- */}
-            <div className="relative z-10 flex flex-col grow pb-24 lg:pb-0">
+            <div className="relative z-10 block pb-24 lg:pb-0">
               
               {/* Navigation */}
               <nav className={`fixed top-0 w-full z-50 transition-all duration-300 border-b border-white/5 ${scrolled ? 'bg-[#020617]/90 backdrop-blur-md py-3 shadow-lg shadow-cyan-900/10' : 'bg-transparent py-4 md:py-6'}`}>
@@ -677,7 +656,7 @@ const App = () => {
               </div>
 
               {/* Hero Section */}
-              <section className="relative min-h-screen flex items-center justify-center px-4 md:px-6 pt-0 md:pt-20 overflow-hidden">
+              <section className="fixed top-0 left-0 w-full h-screen flex items-center justify-center px-4 md:px-6 pt-0 md:pt-20 overflow-hidden z-0 pointer-events-auto">
                 {/* Background Holo Objects - Responsive Positioning */}
                 <div className="absolute top-[15%] -right-[10%] md:top-[10%] md:right-[5%] z-0 pointer-events-none scale-75 md:scale-100 opacity-80 md:opacity-80">
                   <AdvancedHoloCore />
@@ -753,6 +732,9 @@ const App = () => {
                 </motion.div>
               </section>
 
+              {/* Content Wrapper for Parallax Effect */}
+              <div className="relative z-20 bg-[#020617] border-t border-white/10 shadow-[0_-20px_50px_rgba(0,0,0,0.8)] mt-[100vh]">
+              
               {/* Stats Marquee */}
               <div className="w-full bg-cyan-900/10 border-y border-cyan-500/20 py-3 md:py-4 overflow-hidden relative backdrop-blur-sm z-10">
                 <div className="whitespace-nowrap flex gap-10 items-center animate-marquee">
@@ -766,35 +748,7 @@ const App = () => {
               </div>
 
               {/* Featured Events */}
-              <section className="relative py-16 md:py-24 px-4 md:px-6" id="events">
-                <div className="max-w-7xl mx-auto">
-                  <div className="flex flex-col md:flex-row justify-between items-center md:items-end mb-12 md:mb-16 gap-4 text-center md:text-left">
-                    <div>
-                      <h3 className="text-blue-500 font-mono text-xs md:text-sm tracking-wider mb-2 flex items-center justify-center md:justify-start gap-2">
-                        <Target size={14} /> DOMAINS
-                      </h3>
-                      <h2 className="font-cyber text-3xl md:text-5xl font-bold text-white text-shadow-glow">FEATURED EVENTS</h2>
-                    </div>
-                    <div className="h-px bg-linear-to-r from-cyan-500/50 to-transparent grow mx-8 hidden md:block"></div>
-                    <button className="text-cyan-400 hover:text-white transition-colors flex items-center gap-2 text-xs md:text-sm font-bold tracking-widest border-b border-cyan-500 pb-1">
-                      VIEW ALL <ChevronRight size={16} />
-                    </button>
-                  </div>
-
-                  <div className="grid grid-cols-1 md:grid-cols-3 gap-6 md:gap-8">
-                    {[
-                      { icon: <Code size={32} />, title: "Code-A-Thon", subtitle: "National Hackathon", desc: "24-hour coding marathon. Solve real-world problems. Prize Pool: ₹1,00,000+", color: "cyan" },
-                      { icon: <Cpu size={32} />, title: "Robo-Arena", subtitle: "Robot Combat", desc: "Design, build, and destroy. The ultimate arena for machine supremacy.", color: "pink" },
-                      { icon: <Zap size={32} />, title: "Drone Prix", subtitle: "FPV Racing", desc: "Navigate through neon obstacles at breakneck speeds. National qualifiers.", color: "sky" },
-                      { icon: <Award size={32} />, title: "Paper Presentation", subtitle: "Research Symposium", desc: "Present your innovative ideas to industry experts.", color: "cyan" },
-                      { icon: <Mic size={32} />, title: "Tech Talk", subtitle: "Industry Experts", desc: "Keynote sessions from leaders in AI, Blockchain and Space Tech.", color: "pink" },
-                      { icon: <Trophy size={32} />, title: "E-Sports", subtitle: "Gaming Tournament", desc: "Valorant, BGMI, and FIFA championships with massive screens.", color: "sky" }
-                    ].map((event, index) => (
-                      <EventCard key={index} {...event} delay={index * 0.1} onRegister={() => setIsRegistrationOpen(true)} />
-                    ))}
-                  </div>
-                </div>
-              </section>
+              <FeaturedEvents setIsRegistrationOpen={setIsRegistrationOpen} />
 
               {/* Info Section */}
               <section className="relative py-16 md:py-24 px-4 md:px-6 bg-linear-to-b from-transparent to-[#0a0a15]/80">
@@ -937,6 +891,7 @@ const App = () => {
                   </div>
                 </div>
               </footer>
+              </div>
 
               {/* Bottom Navigation - Mobile Floating Dock */}
               <div className="fixed bottom-6 left-1/2 -translate-x-1/2 w-[90%] max-w-md z-50 bg-black/80 backdrop-blur-xl border border-white/10 rounded-2xl shadow-[0_10px_30px_rgba(0,0,0,0.5)] grid grid-cols-5 items-center lg:hidden h-16 px-2">
@@ -970,54 +925,6 @@ const App = () => {
 };
 
 // --- SUB COMPONENTS ---
-
-const EventCard = ({ icon, title, subtitle, desc, color, delay, onRegister }) => {
-  const colorClasses = {
-    cyan: "text-cyan-400 group-hover:border-cyan-500",
-    pink: "text-blue-500 group-hover:border-blue-500",
-    sky: "text-sky-500 group-hover:border-sky-500",
-  };
-  
-  return (
-    <motion.div 
-      initial={{ opacity: 0, y: 20 }}
-      whileInView={{ opacity: 1, y: 0 }}
-      viewport={{ once: true }}
-      transition={{ delay: delay, duration: 0.5 }}
-      className="h-full"
-      onClick={onRegister}
-      whileHover={{ y: -10, rotateX: 5, rotateY: 5 }}
-    >
-      <TiltCard className={`group h-full relative glass-panel p-6 md:p-8 rounded-xl cursor-pointer border border-transparent ${colorClasses[color]} overflow-hidden`}>
-        {/* HUD Corners */}
-        <div className="absolute top-0 left-0 w-8 h-8 border-t-2 border-l-2 border-cyan-500 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
-        <div className="absolute bottom-0 right-0 w-8 h-8 border-b-2 border-r-2 border-cyan-500 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
-
-        <div className={`absolute -right-4 -top-4 p-4 opacity-5 group-hover:opacity-20 transition-all transform group-hover:scale-125 group-hover:rotate-12 duration-500`}>
-           {React.cloneElement(icon, { size: 120 })}
-        </div>
-        
-        <div className="relative z-10 text-left">
-          <div className={`mb-4 md:mb-6 p-3 md:p-4 bg-white/5 w-fit rounded-lg backdrop-blur-md ${color === 'cyan' ? 'text-cyan-400' : color === 'pink' ? 'text-blue-500' : 'text-sky-500'} ring-1 ring-white/10 group-hover:ring-white/30 transition-all group-hover:shadow-[0_0_15px_rgba(0,243,255,0.5)]`}>
-            {React.cloneElement(icon, { size: 24 })}
-          </div>
-          <h4 className="font-mono text-[10px] md:text-xs text-gray-400 mb-2 tracking-widest uppercase flex items-center gap-2">
-            <span className="w-1.5 h-1.5 bg-current rounded-full"></span> {subtitle}
-          </h4>
-          <h3 className="font-cyber text-xl md:text-2xl font-bold text-white mb-3 group-hover:text-cyan-400 transition-all group-hover:drop-shadow-[0_0_5px_rgba(0,243,255,0.8)]">
-            {title}
-          </h3>
-          <p className="text-gray-400 text-xs md:text-sm leading-relaxed mb-6 group-hover:text-gray-300 transition-colors">
-            {desc}
-          </p>
-          <div className="flex items-center gap-2 text-xs md:text-sm font-bold tracking-wider opacity-0 group-hover:opacity-100 transition-opacity -translate-x-4 group-hover:translate-x-0 duration-300 text-cyan-400">
-            REGISTER NOW <ChevronRight size={14} />
-          </div>
-        </div>
-      </TiltCard>
-    </motion.div>
-  );
-};
 
 const StatBox = ({ number, label }) => (
   <motion.div 
