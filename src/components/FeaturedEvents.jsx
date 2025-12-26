@@ -24,6 +24,8 @@ const TiltCard = ({ children, className }) => {
 
   const handleMouseMove = (e) => {
     if (!boundsRef.current) return;
+    // Disable tilt on touch devices/small screens for performance
+    if (window.innerWidth < 768) return;
     
     const width = boundsRef.current.width;
     const height = boundsRef.current.height;
@@ -81,28 +83,31 @@ const FeaturedEvents = ({ setIsRegistrationOpen }) => {
         onEnter: (batch) => {
           gsap.to(batch, {
             opacity: 1,
-            scale: 1.05,
+            scale: 1, // Reset scale to 1 instead of 1.05 for cleaner look
             filter: "grayscale(0%)",
             rotateX: 0,
-            boxShadow: "0px 0px 30px rgba(0, 243, 255, 0.2)",
-            borderColor: "rgba(0, 243, 255, 0.5)",
-            duration: 0.6,
+            boxShadow: "0px 0px 20px rgba(0, 243, 255, 0.15)", // Reduced shadow intensity
+            borderColor: "rgba(0, 243, 255, 0.4)",
+            duration: 0.5, // Faster duration
             stagger: 0.1,
             overwrite: true
           });
         },
         onLeave: (batch) => {
-          gsap.to(batch, {
-            opacity: 0.4,
-            scale: 0.95,
-            filter: "grayscale(100%)",
-            rotateX: 10,
-            boxShadow: "0px 0px 0px rgba(0,0,0,0)",
-            borderColor: "rgba(255, 255, 255, 0.1)",
-            duration: 0.6,
-            stagger: 0.1,
-            overwrite: true
-          });
+          // Only fade out on desktop, keep visible on mobile once entered
+          if (window.innerWidth > 768) {
+             gsap.to(batch, {
+               opacity: 0.4,
+               scale: 0.95,
+               filter: "grayscale(100%)",
+               rotateX: 10,
+               boxShadow: "0px 0px 0px rgba(0,0,0,0)",
+               borderColor: "rgba(255, 255, 255, 0.1)",
+               duration: 0.6,
+               stagger: 0.1,
+               overwrite: true
+             });
+          }
         },
         onEnterBack: (batch) => {
           gsap.to(batch, {
@@ -118,23 +123,25 @@ const FeaturedEvents = ({ setIsRegistrationOpen }) => {
           });
         },
         onLeaveBack: (batch) => {
-          gsap.to(batch, {
-            opacity: 0.4,
-            scale: 0.95,
-            filter: "grayscale(100%)",
-            rotateX: -10,
-            boxShadow: "0px 0px 0px rgba(0,0,0,0)",
-            borderColor: "rgba(255, 255, 255, 0.1)",
-            duration: 0.6,
-            stagger: 0.1,
-            overwrite: true
-          });
+          if (window.innerWidth > 768) {
+            gsap.to(batch, {
+              opacity: 0.4,
+              scale: 0.95,
+              filter: "grayscale(100%)",
+              rotateX: -10,
+              boxShadow: "0px 0px 0px rgba(0,0,0,0)",
+              borderColor: "rgba(255, 255, 255, 0.1)",
+              duration: 0.6,
+              stagger: 0.1,
+              overwrite: true
+            });
+          }
         },
         
         // The "Focus Spot" Logic
-        start: "top 65%",
-        end: "bottom 35%",
-        markers: false // Set to true for debugging
+        start: "top 75%", // Adjusted for better mobile trigger
+        end: "bottom 25%",
+        markers: false 
       });
       
     }, containerRef);

@@ -31,16 +31,16 @@ const Timeline = () => {
       const totalCards = cards.length;
 
       if (isMobile) {
-        // --- MOBILE: DECK OF CARDS EFFECT ---
+        // --- MOBILE: DECK OF CARDS EFFECT (CSS STICKY + GSAP ANIMATION) ---
+        // We rely on CSS 'sticky top-0' for the positioning (much smoother).
+        // ScrollTrigger is used ONLY for the fade/scale effect.
         cards.forEach((card, index) => {
           if (!card) return;
 
           ScrollTrigger.create({
             trigger: card,
             start: "top top", 
-            end: `bottom top+=${100 * (totalCards - index)}`, 
-            pin: true,
-            pinSpacing: false, 
+            end: "bottom top", 
             scrub: true,
             id: `card-${index}`,
             onUpdate: (self) => {
@@ -48,41 +48,26 @@ const Timeline = () => {
               if (index < totalCards - 1) {
                  const progress = self.progress;
                  gsap.to(card, {
-                     scale: 1 - (progress * 0.1), 
+                     scale: 1 - (progress * 0.05), 
                      opacity: 1 - (progress * 0.5), 
-                     filter: `blur(${progress * 5}px)`, 
                      overwrite: 'auto'
                  });
-              } else {
-                // Logic specifically for the LAST card to make it disappear
-                const progress = self.progress;
-                // Start fading out after 50% scroll of its pinned duration
-                if (progress > 0.5) {
-                    gsap.to(card, {
-                        opacity: 1 - ((progress - 0.5) * 2), // Fade out completely by end
-                        scale: 1 - ((progress - 0.5) * 0.2),
-                        filter: `blur(${(progress - 0.5) * 10}px)`,
-                        overwrite: 'auto'
-                    });
-                }
               }
             }
           });
           
-          // Entrance animation
+          // Simple entrance
           gsap.fromTo(card, 
-              { opacity: 0, y: 100, scale: 0.9 },
+              { opacity: 0, y: 50 },
               { 
                   opacity: 1, 
                   y: 0, 
-                  scale: 1,
-                  duration: 0.8,
-                  ease: "power3.out",
+                  duration: 0.5,
                   scrollTrigger: {
                       trigger: card,
                       start: "top 90%",
-                      end: "top 60%",
-                      scrub: 1
+                      end: "top 70%",
+                      toggleActions: "play none none reverse"
                   }
               }
           );
@@ -147,7 +132,7 @@ const Timeline = () => {
   }, [isMobile]);
 
   return (
-    <section className="relative py-20 bg-[#020617]" id="schedule" ref={containerRef}>
+    <section className="relative py-20 bg-deep-space" id="schedule" ref={containerRef}>
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
         <motion.div 
           initial={{ opacity: 0, y: -20 }}
@@ -225,7 +210,7 @@ const Timeline = () => {
                     <div className="w-1/2"></div>
                     
                     <div className="absolute left-1/2 transform -translate-x-1/2 flex items-center justify-center z-10">
-                      <div className="w-4 h-4 bg-[#020617] border-2 border-cyan-500 rounded-full shadow-[0_0_10px_rgba(0,243,255,0.8)] relative group-hover:scale-125 transition-transform duration-300">
+                      <div className="w-4 h-4 bg-deep-space border-2 border-cyan-500 rounded-full shadow-[0_0_10px_rgba(0,243,255,0.8)] relative group-hover:scale-125 transition-transform duration-300">
                         <div className="absolute inset-0 bg-cyan-400 rounded-full animate-ping opacity-20"></div>
                       </div>
                     </div>
@@ -233,7 +218,7 @@ const Timeline = () => {
                     <div className={`w-1/2 ${index % 2 === 0 ? 'pr-16 text-right' : 'pl-16 text-left'}`}>
                       <div className="relative group">
                         {/* Connecting Line */}
-                        <div className={`absolute top-1/2 ${index % 2 === 0 ? '-right-16' : '-left-16'} w-16 h-[1px] bg-cyan-500/30 group-hover:bg-cyan-400 transition-colors duration-500`}>
+                        <div className={`absolute top-1/2 ${index % 2 === 0 ? '-right-16' : '-left-16'} w-16 h-px bg-cyan-500/30 group-hover:bg-cyan-400 transition-colors duration-500`}>
                             <div className={`absolute top-1/2 -translate-y-1/2 w-2 h-2 bg-cyan-500 rounded-full ${index % 2 === 0 ? 'left-0' : 'right-0'} shadow-[0_0_10px_rgba(6,182,212,0.8)]`}></div>
                         </div>
 

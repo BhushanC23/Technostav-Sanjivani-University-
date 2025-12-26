@@ -85,7 +85,7 @@ const BootSequence = ({ onComplete }) => {
 
   return (
     <motion.div 
-      className="fixed inset-0 z-50 bg-[#020617] flex flex-col items-center justify-center font-mono text-cyan-500 p-4 overflow-hidden"
+      className="fixed inset-0 z-50 bg-deep-space flex flex-col items-center justify-center font-mono text-cyan-500 p-4 overflow-hidden"
       exit={{ opacity: 0 }}
       transition={{ duration: 0.8 }}
     >
@@ -172,24 +172,47 @@ const BootSequence = ({ onComplete }) => {
 const CustomCursor = () => {
   const cursorRef = useRef(null);
   const followerRef = useRef(null);
+  const [isTouch, setIsTouch] = useState(false);
 
   useEffect(() => {
+    // Disable on touch devices
+    if (window.matchMedia("(pointer: coarse)").matches) {
+      setIsTouch(true);
+      return;
+    }
+
     const moveCursor = (e) => {
       if (cursorRef.current && followerRef.current) {
-        cursorRef.current.style.transform = `translate3d(${e.clientX}px, ${e.clientY}px, 0)`;
-        followerRef.current.animate({
-          transform: `translate3d(${e.clientX}px, ${e.clientY}px, 0)`
-        }, { duration: 500, fill: "forwards" });
+        // Instant cursor
+        gsap.set(cursorRef.current, {
+          x: e.clientX,
+          y: e.clientY,
+          xPercent: -50,
+          yPercent: -50
+        });
+        
+        // Smooth follower
+        gsap.to(followerRef.current, {
+          x: e.clientX,
+          y: e.clientY,
+          xPercent: -50,
+          yPercent: -50,
+          duration: 0.5,
+          ease: "power2.out",
+          overwrite: "auto"
+        });
       }
     };
     window.addEventListener('mousemove', moveCursor);
     return () => window.removeEventListener('mousemove', moveCursor);
   }, []);
 
+  if (isTouch) return null;
+
   return (
     <>
-      <div ref={cursorRef} className="fixed top-0 left-0 w-4 h-4 bg-white rounded-full mix-blend-difference pointer-events-none z-[9999] -translate-x-1/2 -translate-y-1/2" />
-      <div ref={followerRef} className="fixed top-0 left-0 w-8 h-8 border border-cyan-500 rounded-full pointer-events-none z-[9998] -translate-x-1/2 -translate-y-1/2 transition-transform duration-100 ease-out" />
+      <div ref={cursorRef} className="fixed top-0 left-0 w-4 h-4 bg-white rounded-full mix-blend-difference pointer-events-none z-[9999] hidden md:block" />
+      <div ref={followerRef} className="fixed top-0 left-0 w-8 h-8 border border-cyan-500 rounded-full pointer-events-none z-[9998] hidden md:block" />
     </>
   );
 };
@@ -414,10 +437,10 @@ const AdvancedHoloCore = () => {
   return (
     <div className="relative w-64 h-64 md:w-96 md:h-96 flex items-center justify-center pointer-events-none opacity-60">
       {/* Outer Ring - Simplified animation for mobile */}
-      <div className="absolute w-full h-full border border-cyan-500/30 rounded-full animate-[spin_10s_linear_infinite] md:animate-[spin_10s_linear_infinite] border-t-2 border-t-cyan-500"></div>
+      <div className="absolute w-full h-full border border-cyan-500/30 rounded-full animate-[spin_20s_linear_infinite] md:animate-[spin_10s_linear_infinite] border-t-2 border-t-cyan-500"></div>
       
       {/* Tech Ticks - Visible on mobile now for better vibe */}
-      <div className="absolute w-[110%] h-[110%] animate-[spin_30s_linear_infinite]">
+      <div className="absolute w-[110%] h-[110%] animate-[spin_60s_linear_infinite]">
          <div className="absolute top-0 left-1/2 -translate-x-1/2 w-0.5 h-4 bg-cyan-500/50"></div>
          <div className="absolute bottom-0 left-1/2 -translate-x-1/2 w-0.5 h-4 bg-cyan-500/50"></div>
          <div className="absolute left-0 top-1/2 -translate-y-1/2 w-4 h-0.5 bg-cyan-500/50"></div>
@@ -425,10 +448,10 @@ const AdvancedHoloCore = () => {
       </div>
 
       {/* Middle Ring (Counter Rotate) */}
-      <div className="absolute w-[80%] h-[80%] border border-blue-500/30 rounded-full animate-[spin_15s_linear_infinite_reverse] border-b-2 border-b-blue-500 border-dashed"></div>
+      <div className="absolute w-[80%] h-[80%] border border-blue-500/30 rounded-full animate-[spin_30s_linear_infinite_reverse] border-b-2 border-b-blue-500 border-dashed"></div>
       
       {/* Inner Ring */}
-      <div className="absolute w-[60%] h-[60%] border-2 border-cyan-500/20 rounded-full animate-[spin_20s_linear_infinite] flex items-center justify-center">
+      <div className="absolute w-[60%] h-[60%] border-2 border-cyan-500/20 rounded-full animate-[spin_40s_linear_infinite] flex items-center justify-center">
         <div className="w-full h-full border-l-4 border-cyan-500 rounded-full opacity-50"></div>
       </div>
       
@@ -505,7 +528,7 @@ const App = () => {
   };
 
   return (
-    <div className="min-h-screen bg-[#020617] text-white font-sans overflow-x-hidden selection:bg-cyan-500 selection:text-white relative">
+    <div className="min-h-screen bg-deep-space text-white font-sans overflow-x-hidden selection:bg-cyan-500 selection:text-white relative">
       <CustomCursor />
       <style>{`
         @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;700;900&family=Rajdhani:wght@300;400;500;600;700&display=swap');
@@ -594,20 +617,20 @@ const App = () => {
             className="w-full min-h-screen relative flex flex-col"
           >
             {/* --- BACKGROUND LAYER --- */}
-            <div className="fixed inset-0 z-0 bg-linear-to-b from-[#020617] to-[#0a0520] overflow-hidden">
+            <div className="fixed inset-0 z-0 bg-linear-to-b from-deep-space to-[#0a0520] overflow-hidden">
               <MatrixRain />
               <StarField />
               <CyberGrid />
               {/* Reduced blur radius for mobile performance */}
-              <div className="absolute top-[-10%] left-[-10%] w-75 md:w-125 h-75 md:h-125 bg-cyan-900/20 rounded-full blur-[40px] md:blur-[120px] animate-pulse"></div>
-              <div className="absolute bottom-[-10%] right-[-10%] w-75 md:w-150 h-75 md:h-150 bg-sky-900/20 rounded-full blur-[40px] md:blur-[120px] animate-pulse" style={{animationDelay: '1s'}}></div>
+              <div className="absolute top-[-10%] left-[-10%] w-75 md:w-125 h-75 md:h-125 bg-cyan-900/20 rounded-full blur-2xl md:blur-[120px] animate-pulse"></div>
+              <div className="absolute bottom-[-10%] right-[-10%] w-75 md:w-150 h-75 md:h-150 bg-sky-900/20 rounded-full blur-2xl md:blur-[120px] animate-pulse" style={{animationDelay: '1s'}}></div>
             </div>
 
             {/* --- UI LAYER --- */}
             <div className="relative z-10 block pb-24 lg:pb-0">
               
               {/* Navigation */}
-              <nav className={`fixed top-0 w-full z-50 transition-all duration-300 border-b border-white/5 ${scrolled ? 'bg-[#020617]/90 backdrop-blur-md py-3 shadow-lg shadow-cyan-900/10' : 'bg-transparent py-4 md:py-6'}`}>
+              <nav className={`fixed top-0 w-full z-50 transition-all duration-300 border-b border-white/5 ${scrolled ? 'bg-deep-space/90 backdrop-blur-md py-3 shadow-lg shadow-cyan-900/10' : 'bg-transparent py-4 md:py-6'}`}>
                 <div className="max-w-7xl mx-auto px-4 md:px-6 flex justify-between items-center">
                   <div className="flex items-center gap-2 group cursor-pointer">
                     <div className="w-8 h-8 md:w-10 md:h-10 border-2 border-cyan-500 rounded-sm flex items-center justify-center relative overflow-hidden group-hover:border-blue-500 transition-colors bg-black/50 backdrop-blur-sm">
@@ -721,7 +744,7 @@ const App = () => {
                   transition={{ delay: 2, duration: 1 }}
                   className="absolute bottom-8 left-1/2 -translate-x-1/2 flex flex-col items-center gap-3 z-10"
                 >
-                  <div className="w-[26px] h-[42px] rounded-full border-2 border-cyan-500/40 flex justify-center p-2 shadow-[0_0_15px_rgba(0,243,255,0.2)] bg-black/20 backdrop-blur-sm">
+                  <div className="w-6.5 h-10.5 rounded-full border-2 border-cyan-500/40 flex justify-center p-2 shadow-[0_0_15px_rgba(0,243,255,0.2)] bg-black/20 backdrop-blur-sm">
                     <motion.div 
                       animate={{ y: [0, 12, 0] }}
                       transition={{ duration: 1.5, repeat: Infinity, repeatType: "loop", ease: "easeInOut" }}
@@ -733,7 +756,7 @@ const App = () => {
               </section>
 
               {/* Content Wrapper for Parallax Effect */}
-              <div className="relative z-20 bg-[#020617] border-t border-white/10 shadow-[0_-20px_50px_rgba(0,0,0,0.8)] mt-[100vh]">
+              <div className="relative z-20 bg-deep-space border-t border-white/10 shadow-[0_-20px_50px_rgba(0,0,0,0.8)] mt-[100vh]">
               
               {/* Stats Marquee */}
               <div className="w-full bg-cyan-900/10 border-y border-cyan-500/20 py-3 md:py-4 overflow-hidden relative backdrop-blur-sm z-10">
@@ -869,8 +892,8 @@ const App = () => {
                   </div>
                   
                   {/* Gradient Fade Edges */}
-                  <div className="absolute top-0 left-0 w-20 md:w-40 h-full bg-linear-to-r from-[#020617] to-transparent z-10"></div>
-                  <div className="absolute top-0 right-0 w-20 md:w-40 h-full bg-linear-to-l from-[#020617] to-transparent z-10"></div>
+                  <div className="absolute top-0 left-0 w-20 md:w-40 h-full bg-linear-to-r from-deep-space to-transparent z-10"></div>
+                  <div className="absolute top-0 right-0 w-20 md:w-40 h-full bg-linear-to-l from-deep-space to-transparent z-10"></div>
                 </div>
               </section>
 
