@@ -718,7 +718,7 @@ const App = () => {
                   
                   <motion.div variants={itemVariants} className="mb-8 md:mb-8 relative inline-block text-center">
                     <h1 className="font-cyber text-5xl sm:text-6xl md:text-7xl lg:text-9xl font-black leading-[0.9] md:leading-none cursor-default select-none filter drop-shadow-[0_0_15px_rgba(139,92,246,0.5)] min-h-[1.2em] tracking-tighter">
-                      <span className="text-transparent bg-clip-text bg-linear-to-b from-white via-cyan-100 to-cyan-900 glitch-text" data-text={typingText}>{typingText}</span>
+                      <span className="text-transparent bg-clip-text bg-linear-to-b from-white via-cyan-100 to-cyan-900">{typingText}</span>
                       <span className="animate-blink text-cyan-500 ml-1">_</span>
                     </h1>
                     <h2 className="font-cyber text-lg sm:text-xl md:text-3xl lg:text-5xl font-bold text-cyan-500 tracking-[0.3em] mt-4 md:mt-4 filter drop-shadow-[0_0_20px_rgba(139,92,246,0.5)] uppercase">
