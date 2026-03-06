@@ -637,7 +637,7 @@ const App = () => {
                       <Zap className="text-cyan-500 group-hover:text-blue-500 transition-colors w-5 h-5 md:w-6 md:h-6" />
                     </div>
                     <div className="flex flex-col">
-                      <span className="font-cyber text-lg md:text-2xl font-bold tracking-wider text-white leading-none glitch" data-text="TECHNOSTAV">TECHNO<span className="text-cyan-500">STAV</span></span>
+                      <span className="font-cyber text-lg md:text-2xl font-bold tracking-wider text-white leading-none">TECHNO<span className="text-cyan-500">STAV</span></span>
                       <span className="text-[8px] md:text-[10px] text-gray-400 tracking-[0.2em] uppercase leading-tight">Sanjivani University</span>
                     </div>
                   </div>
