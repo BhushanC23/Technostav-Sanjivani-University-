@@ -5,23 +5,24 @@ pipeline {
 
         stage('Install Dependencies') {
             steps {
-                sh 'npm install'
+                bat 'npm install'
             }
         }
 
         stage('Build Project') {
             steps {
-                sh 'npm run build'
+                bat 'npm run build'
             }
         }
 
-        stage('Deploy to Apache') {
+        stage('Deploy') {
             steps {
-                sh '''
-                sudo rm -rf /var/www/html/*
-                sudo cp -r dist/* /var/www/html/
+                bat '''
+                if not exist deploy mkdir deploy
+                xcopy dist deploy /E /I /Y
                 '''
             }
         }
+
     }
 }
